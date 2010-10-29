@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name = "peons"
+  s.name = "tell"
   s.version = "0.0.1"
   s.summary = %{(T)hin Ruby Secure Sh(ell).}
   s.date = "2010-10-29"

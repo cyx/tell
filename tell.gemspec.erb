@@ -1,0 +1,27 @@
+<%- require "./lib/tell" -%>
+<%- require "date" -%>
+Gem::Specification.new do |s|
+  s.name = "peons"
+  s.version = "<%= Tell::VERSION %>"
+  s.summary = %{(T)hin Ruby Secure Sh(ell).}
+  s.date = "<%= Date.today.to_s %>"
+  s.author = "Cyril David"
+  s.email = "cyx@pipetodevnull.com"
+  s.homepage = "http://github.com/cyx/tell"
+
+  s.specification_version = 2 if s.respond_to? :specification_version=
+
+  s.files = <%= Dir[
+    "lib/**/*.rb",
+    "README*",
+    "LICENSE",
+    "test/**/*.*"
+  ].inspect %>
+
+  s.require_paths = ["lib"]
+
+  s.add_dependency "clap"
+  s.add_development_dependency "cutest"
+  s.has_rdoc = false
+  s.executables.push "tell"
+end

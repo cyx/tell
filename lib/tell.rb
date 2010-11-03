@@ -19,6 +19,20 @@ class Tell
     @directory = directory
   end
 
+  def recipe(file)
+    File.readlines(file).each do |line|
+      next if command = line.strip and command.to_s.empty?
+
+      if command =~ /\A# servers (.*)\z/
+        @servers = $1.split(" ")
+      elsif command =~ /\A# directory (.*)\z/
+        @directory = $1
+      else
+        execute(command)
+      end
+    end
+  end
+
   def execute(command)
     @commands << command
   end

@@ -120,3 +120,62 @@ scope do
     assert "             file2" == lines[4]
   end
 end
+
+# with a recipe
+scope do
+  test "runs all commands" do |t|
+    def t.exec(_, command)
+      case command
+      when "git pull" then "Already up to date."
+      when "thin restart" then "Restarting... Done."
+      else
+        raise "Unknown command: #{command}"
+      end
+    end
+
+    out = capture do
+      t.recipe "./test/recipe.sh"
+      t.run
+    end
+
+    lines = out.split("\n")
+    assert Tell::FORMAT % ["connect", "server1"] == lines[0]
+
+    assert Tell::FORMAT % ["run", "git pull"] == lines[1]
+    assert "             Already up to date." == lines[2]
+
+    assert Tell::FORMAT % ["run", "thin restart"] == lines[3]
+    assert "             Restarting... Done." == lines[4]
+  end
+end
+
+# with the experimental recipe syntax
+scope do
+  test "assigns the server and directory" do
+    t = Tell.new
+
+    def t.exec(_, command)
+      case command
+      when "git pull" then "Already up to date."
+      when "thin restart" then "Restarting... Done."
+      else
+        raise "Unknown command: #{command}"
+      end
+    end
+
+    out = capture do
+      t.recipe "./test/extended-recipe.sh"
+      t.run
+    end
+
+    lines = out.split("\n")
+    assert Tell::FORMAT % ["connect", "server1"] == lines[0]
+    assert Tell::FORMAT % ["directory", "/some/path"] == lines[1]
+
+    assert Tell::FORMAT % ["run", "git pull"] == lines[2]
+    assert "             Already up to date." == lines[3]
+
+    assert Tell::FORMAT % ["run", "thin restart"] == lines[4]
+    assert "             Restarting... Done." == lines[5]
+  end
+end

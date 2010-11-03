@@ -50,7 +50,7 @@ private
   def cwd_and_run(command)
     cd = "cd #{@directory}" if @directory
 
-    [cd, command].join(";")
+    [cd, command].compact.join(";")
   end
 
   def display(str, margin = 13)

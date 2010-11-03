@@ -99,3 +99,24 @@ scope do
     assert "             file2" == lines[3]
   end
 end
+
+# with a directory
+scope do
+  test "execute with one command" do |t|
+    def t.exec(*args); "file1\nfile2"; end
+
+    out = capture do
+      t.directory "/some/path"
+      t.execute "ls"
+      t.run
+    end
+
+    lines = out.split("\n")
+    assert Tell::FORMAT % ["connect", "server1"] == lines[0]
+    assert Tell::FORMAT % ["directory", "/some/path"] == lines[1]
+    assert Tell::FORMAT % ["run", "ls"] == lines[2]
+
+    assert "             file1" == lines[3]
+    assert "             file2" == lines[4]
+  end
+end

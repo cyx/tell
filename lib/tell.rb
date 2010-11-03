@@ -15,6 +15,10 @@ class Tell
     instance_eval(&block) if block_given?
   end
 
+  def directory(directory)
+    @directory = directory
+  end
+
   def execute(command)
     @commands << command
   end
@@ -24,6 +28,7 @@ class Tell
 
     servers.each do |server|
       log :connect, server
+      log :directory, @directory if @directory
 
       @commands.each do |command|
         log :run, command
@@ -39,7 +44,13 @@ private
   end
 
   def exec(server, command)
-    `ssh #{server} -- #{command}`
+    `ssh #{server} "#{cwd_and_run(command)}"`
+  end
+
+  def cwd_and_run(command)
+    cd = "cd #{@directory}" if @directory
+
+    [cd, command].join(";")
   end
 
   def display(str, margin = 13)

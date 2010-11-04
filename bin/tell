@@ -6,7 +6,7 @@ require "clap"
 servers = []
 servers << ARGV.shift until ARGV.empty? or ARGV.first.start_with?("-")
 
-if ARGV.empty?
+if servers.empty? or ARGV.empty?
   puts 'Usage: tell host1 [host2 [host3 ...]] -c "COMMAND" [-c "COMMAND2"]'
   exit
 end

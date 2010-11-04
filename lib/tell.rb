@@ -1,10 +1,11 @@
 class Tell
   VERSION = "0.0.1"
 
-  # ANSI Colors for a better user experience.
-  # 1;32m - Green
-  # 1;37m - White
-  FORMAT = "\e[1;32m %10s\e[1;37m  %s"
+  GREEN = "\e[1;32m"
+  RED   = "\e[1;31m"
+  WHITE = "\e[1;37m"
+
+  FORMAT = "\n#{GREEN}%s#{RED}@%s#{WHITE}\n-> %s"
 
   attr :servers
 
@@ -41,11 +42,8 @@ class Tell
     silence!
 
     servers.each do |server|
-      log :connect, server
-      log :directory, @directory if @directory
-
       @commands.each do |command|
-        log :run, command
+        log server, command
 
         display exec(server, command)
       end
@@ -53,8 +51,8 @@ class Tell
   end
 
 private
-  def log(type, message)
-    puts FORMAT % [type, message]
+  def log(server, command)
+    puts FORMAT % [@directory, server, command]
   end
 
   def exec(server, command)
@@ -64,10 +62,10 @@ private
   def cwd_and_run(command)
     cd = "cd #{@directory}" if @directory
 
-    [cd, command].compact.join(";")
+    [cd, command].compact.join(" && ")
   end
 
-  def display(str, margin = 13)
+  def display(str, margin = 3)
     puts str.gsub(/^/, " " * margin)
   end
 
